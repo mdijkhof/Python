@@ -1,21 +1,25 @@
+"""
+This program asks for a password. if returned correctly, the acces will be granted
+"""
+
 def question():
-    answer = input("What is the password? "+f"{i} more tries: ")
+    answer = input("What is the password? " + f"{i} more tries: ")
     return answer
 
 
-password = "test"
+PASSWORD = "test"
 i = 3
 
 
-while i > 0: 
-    while question() != password:
+while i > 0:
+    while question() != PASSWORD:
         if i == 1:
             i = i - 1
             break
-        else:
-            print("Wrong! Try Again..")
-            i = i - 1
-            break
+
+        print("Wrong! Try Again..")
+        i = i - 1
+
     else:
         print("Success! Access Granted!")
         i = 0
