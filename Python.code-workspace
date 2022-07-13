@@ -4,5 +4,47 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"sqltools.connections": [
+			{
+				"port": 1025,
+				"tdsqloptions": {
+					"logmech": "TDNEGO",
+					"encryptdata": false
+				},
+				"previewLimit": 50,
+				"driver": "SQLTools Teradata Driver",
+				"name": "MD",
+				"server": "141.206.0.4",
+				"username": "mdijkhof",
+				"password": "seinfeld66P%"
+			},
+			{
+				"port": 1025,
+				"tdsqloptions": {
+					"logmech": "TD2",
+					"encryptdata": true
+				},
+				"previewLimit": 50,
+				"driver": "SQLTools Teradata Driver",
+				"name": "MarkTest",
+				"server": "tdwd.group.on",
+				"username": "mdijkhof",
+				"password": "seinfeld66P%"
+			},
+			{
+				"port": 1025,
+				"tdsqloptions": {
+					"logmech": "TD2",
+					"encryptdata": true
+				},
+				"previewLimit": 50,
+				"driver": "SQLTools Teradata Driver",
+				"name": "MarkTest2",
+				"server": "teradata.groupondev.com",
+				"username": "mdijkhof",
+				"password": "seinfeld66P%"
+			}
+		]
+	}
 }
