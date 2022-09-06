@@ -403,7 +403,7 @@ def pre_verification(sfdc,id):
 
     return output
 
-def planningLeadtime(sfdc,id,startDate,leadtime,StartDate_adj):
+def planningLeadtime(sfdc,id,startDate):
     ''' Check Vette Date to keep leadtime for deal scheduling
         Compare with the start date given in the request
         Returns:
@@ -435,18 +435,19 @@ def planningLeadtime(sfdc,id,startDate,leadtime,StartDate_adj):
         ):
         # based on marketing input re: package, different lead times could be applied (2022-07-29) - https://docs.google.com/presentation/d/1PrWM4sBF7DjUm1brFngC5tyudHdcIhF7y2SwUpHxLUQ/edit#slide=id.g13e8fbb3ca1_0_0
             if 'package 1' in national_approval_notes.lower():
-                leadtime = 10
+                leadtime = int(10)
             elif 'package 2' in national_approval_notes.lower():
-                leadtime = 10
+                leadtime = int(10)
             elif 'package 3' in national_approval_notes.lower():
-                leadtime = 5
+                leadtime = int(5)
             else:
-                leadtime = 2
+                leadtime = int(2)
 
     # else apply standard leadtime
     else:
-        leadtime = 2
-        return leadtime
+        leadtime = int(2)
+        
+    
 
     if startDate == '':
         output = startDate
@@ -457,14 +458,12 @@ def planningLeadtime(sfdc,id,startDate,leadtime,StartDate_adj):
         startDate_adj = max(datetime.strptime(startDate, "%Y-%m-%d").date(), vetteDate + timedelta(days=leadtime))
         startDate_adj = startDate_adj.strftime('%Y-%m-%d')
         output = startDate_adj
-        return StartDate_adj
-
+        
     except Exception as e:
         output = startDate
 
-    return output
+    return output,leadtime
     
-
 def planningEndDate(sfdc,id,startDate,endDate):
     ''' Review end date if not earlier than the adjusted start date (leadtime rule driven by planningLeadtime function),
         as well as to make sure it's before the Groupon Expiration Date
@@ -559,7 +558,7 @@ def reject_requests_email(recipient,opp_id,country,division,start_date,end_date,
 
     return output
 
-def generate_case_description(sfdc,opp_id,email_address,request_type,country,opportunity_link,account_id,division,start_date,end_date,new_start_date,new_end_date,side_PR_start_date,side_PR_end_date,new_expiration_date,request_type_attribute,add_remove_attribute,attribute_name,comments,pre_verification_comments,leadtime,StartDate_adj):
+def generate_case_description(sfdc,opp_id,email_address,request_type,country,opportunity_link,account_id,division,start_date,end_date,new_start_date,new_end_date,side_PR_start_date,side_PR_end_date,new_expiration_date,request_type_attribute,add_remove_attribute,attribute_name,comments,pre_verification_comments):
     """
     ========== DOCSTRING ==========
     Purpose: generate content for Description field for salesforce Case
@@ -580,8 +579,14 @@ def generate_case_description(sfdc,opp_id,email_address,request_type,country,opp
         deal_vette_time = soql_output['records'][0]['Deal_Vette_Time__c']
         account_type = soql_output['records'][0]['Account']['Type']
         feature_country = soql_output['records'][0]['Account']['Feature_Country__c']
-        
+        startDate = planningLeadtime[0]
+        leadtime = planningLeadtime[1]
         owner_revenue_center = soql_output['records'][0]['Owner']['Revenue_Center__c']
+        
+        # convert deal_vette_time in order to compare to start date later on
+        deal_vette_time = datetime.strptime(deal_vette_time.split('T')[0], "%Y-%m-%d").date()
+        deal_vette_time_adj = (deal_vette_time + timedelta(days=leadtime))
+        deal_vette_time_adj = deal_vette_time.strftime('%Y-%m-%d')
 
         # leadtime in days
         # check if Core National Merchants 
@@ -593,7 +598,7 @@ def generate_case_description(sfdc,opp_id,email_address,request_type,country,opp
                     and subcategory_v3 not in ['Courses - eLearning', 'Courses - Continuing Education']
                     and not any(pds_string in pds for pds_string in ['Custom -', 'eLearning', 'Photo Printing', 'Scrapbooking / Personal Calendar', 'Photo Processing','Custom Printing', '- Custom', '- Online Custom'])
                 ):
-                    if StartDate_adj >= deal_vette_time + timedelta(days=leadtime):
+                    if startDate >= deal_vette_time_adj:
                         core_national_comment = 'Ok to reschedule'
                     else:
                         core_national_comment = national_approval_notes + ': check the vette time'

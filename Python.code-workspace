@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "..\\.megatron"
+		},
+		{
+			"path": "..\\AppData\\Local\\Programs\\Python\\Python310\\Lib\\site-packages\\megatron"
 		}
 	],
 	"settings": {
@@ -48,6 +51,7 @@
 				"username": "mdijkhof",
 				"password": "seinfeld66P%"
 			}
-		]
+		],
+		"git.ignoreLimitWarning": true
 	}
 }
