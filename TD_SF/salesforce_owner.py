@@ -7,8 +7,11 @@ from connect import sf_query as sf
 owner_ids = []
 
 # connect and query Teradata
-query = td('SELECT DISTINCT account_id FROM sandbox.bumblebee_output')
+query = td('SELECT DISTINCT account_id,current_owner_id,employee_sf_id FROM sandbox.bumblebee_output')
+print(query) # this is a dataframe 
+
 account_ids = query['account_id'].tolist()
+
 
 # get data from SOQL query ad add to dictionary
 for account_id in account_ids:
@@ -18,11 +21,15 @@ for account_id in account_ids:
 
 data = {
     'account_id': account_ids,
-    'owner_id': owner_ids    
-} 
+    'owner_id': owner_ids
+    } 
 
 # upload data to teradata
 data_table = pd.DataFrame(data)
-m.df_to_sql(data_table,table_name='bumblebee_owner_check',  adapter='teradata')
 
-print("Success")
+print(data_table)
+
+
+# m.df_to_sql(data_table,table_name='bumblebee_owner_check',  adapter='teradata')
+
+# print("Success")

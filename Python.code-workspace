@@ -8,6 +8,9 @@
 		},
 		{
 			"path": "..\\AppData\\Local\\Programs\\Python\\Python310\\Lib\\site-packages\\megatron"
+		},
+		{
+			"path": "../AppData/Local/Programs/Python/Python310/Lib/site-packages"
 		}
 	],
 	"settings": {

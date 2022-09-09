@@ -17,3 +17,11 @@ def sf_query(soql_query,input_id):
     
     return output
 
+
+
+def sf_login():
+    from simple_salesforce import Salesforce as sf
+        
+    sf_login = sf(username = 'svc_rao@groupon.com', password = 'Password-1Je8IR8frn0gkbS68Eq4OHZmM', security_token = '')
+    
+    return sf_login
