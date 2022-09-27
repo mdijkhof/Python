@@ -12,7 +12,7 @@ def td_query(sql_query):
 def sf_query(soql_query,input_id):
     from simple_salesforce import Salesforce as sf
     
-    login_sf = sf(username = 'svc_rao@groupon.com', password = 'Password-1Je8IR8frn0gkbS68Eq4OHZmM', security_token = '')
+    login_sf = sf(username = 'intl_sales_ops_analysts@groupon.com', password = 'BA_intl_grp_3', security_token = 'ryDPBLSTkb54qbEY06GJSiA0')
     output = login_sf.query(f"{soql_query} = '{input_id}'")
     
     return output
