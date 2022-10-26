@@ -1,20 +1,21 @@
-import os
 import requests
 import json
-import pygsheets
 from datetime import datetime
+import teradatasql
+import pandas as pd
 
+### Connect to Teradata and get all deals that need to be checked in Deal Catalogue
+con = teradatasql.connect(host='tdwd.group.on',user='ub_intl_sales_ops',password='BA_intl_grp_3')
+input_data = pd.read_sql("SELECT deal_uuid,contract_number FROM sandbox.EMEA_Travel_deals_dim WHERE deal_ends_at >= Current_Date AND booking_voucher = 'Booking' AND country_name IN ('BE','DE','ES','FR','GB', 'IE', 'IT', 'NL', 'PL','AU') GROUP BY 1,2",con)
+
+live_deals = input_data.values.tolist()
+
+print(live_deals)
+
+### Set up additional variables
 now = datetime.utcnow().strftime('%Y-%m-%d')
 
-gc = pygsheets.authorize(service_file=os.path.expanduser("~")+"\\.megatron\\google_service_account_secret.json")
-
-sh = gc.open_by_key('1IdFaTUqxf6v6V_GONlVsNWbobajlPEPRZ-XyDm-gUAQ')
-wks_divisions = sh.worksheet_by_title("active_divisions")
-wks_deals = sh.worksheet_by_title("live_deals")
-live_deals = wks_deals.get_values("A1","B10000")
-divisions = [["load_date","deal_uuid","contract_id","country_code"]]
-errors = []
-
+### For all deal_uuids, check the deal_catalog values and add them to the Divisions variable and insert data into teradata
 for i in range(1,len(live_deals)):
     deal_uuid = live_deals[i][0]
     contract_id = live_deals[i][1]
@@ -26,12 +27,10 @@ for i in range(1,len(live_deals)):
         DRC = []
         DRC = json_deal_catalogue["deal"]["distributionRegionCodes"]
         for c in DRC:
-            country = c
-            divisions.append([now,deal_uuid,contract_id,country])
+            print(c)
+            query = f"INSERT INTO sandbox.getaways_xnt_drc ('{now}','{deal_uuid}','{contract_id}','{c}')"
+            pd.read_sql_query(query,con)
     except:
-        errors.append(deal_uuid)
         pass
-
-crange = f'A1:D{len(divisions)}'
-wks_divisions.clear()
-wks_divisions.update_values(crange, divisions)
+  
+print("Success")

@@ -1,0 +1,6 @@
+import requests
+from requests_auth import Basic
+
+data = requests.get('http://deal-catalog.snc1/deal_catalog/v2/deals/eed82d1e-9ffc-4950-9fad-2c1bda5295cb?clientId=f183e5fbee1bb4cd-display-ads', auth=Basic('mdijkhof', 'seinfeld66P&')
+            
+print(data)
